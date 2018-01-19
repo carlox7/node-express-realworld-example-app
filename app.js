@@ -39,7 +39,7 @@ if(isProduction){
 }
 
 require('./models/User');
-require('./conig/passport');
+require('./config/passport');
 
 app.use(require('./routes'));
 

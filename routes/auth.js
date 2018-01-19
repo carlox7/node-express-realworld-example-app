@@ -22,3 +22,5 @@ let auth = {
         getToken: getTokenFromHeader
     })
 };
+
+module.exports = auth;
