@@ -39,6 +39,7 @@ if(isProduction){
 }
 
 require('./models/User');
+require('./conig/passport');
 
 app.use(require('./routes'));
 
