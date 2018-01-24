@@ -5,7 +5,7 @@ const Article = mongoose.model('Article');
 const User = mongoose.model('User');
 const auth = require('../auth');
 
-router.post('/' auth.required, function(req, res, next){
+router.post('/', auth.required, function(req, res, next){
     User.findById(req.payload.id)
     .then(user => {
         if(!user) {return res.sendStatus(401);}
@@ -88,6 +88,42 @@ router.delete('/:article', auth.required, function(req, res, next){
             return res.sendStatus(403);
         }
     });
+});
+
+router.post('/:article/favorite', auth.required, function(req, res, next){
+    let articleId = req.article._id;
+
+    User.findById(req.payload.id)
+    .then(user => {
+        if(!user){return res.sendStatus(401);}
+
+        return user.favorite(articleId)
+        .then(() => {
+            return req.article.updateFavoriteCount()
+            .then(article => {
+                return res.json({article: article.toJSONFor(user)});
+            });
+        });
+    })
+    .catch(next);
+});
+
+router.delete('/:article/favorite', auth.required, function(req, res, next){
+    let articleId = req.article._id;
+
+    User.findById(req.payload.id)
+    .then(user => {
+        if(!user){return res.sendStatus(401);}
+
+        return user.unfavorite(articleId)
+        .then(() => {
+            return req.article.updateFavoriteCount()
+            .then(article => {
+                return res.json({article: article.toJSONFor(user)});
+            });
+        });
+    })
+    .catch(next);
 });
 
 module.exports = router;

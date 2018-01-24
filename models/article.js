@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const slug = require('slug');
+const User = mongoose.model('User');
 
 const ArticleSchema = new mongoose.Schema({
     slug: {type: String, lowercase: true, unique: true},
@@ -26,7 +27,7 @@ ArticleSchema.pre('validate', function(next){
     next();
 });
 
-ArticleSchema.methods.toJSONFof = function(user){
+ArticleSchema.methods.toJSONFor = function(user){
     return{
         slug: this.slug,
         title: this.title,
@@ -35,9 +36,21 @@ ArticleSchema.methods.toJSONFof = function(user){
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
         tagList: this.tagList,
+        favorited: user ? user.isFavorite(this._id) : false,
         favoritesCount: this.favoritesCount,
         author: this.author.toProfileJSONFor(user)
     };
+};
+
+ArticleSchema.methods.updateFavoriteCount = function(){
+    let article = this;
+
+    return User.count({favorites: {$in: [article._id]}})
+    .then(count => {
+        article.favoritesCount = count;
+
+        return article.save();
+    });
 };
 
 mongoose.model('Article', ArticleSchema);
