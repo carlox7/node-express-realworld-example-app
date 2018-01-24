@@ -47,4 +47,13 @@ UserSchema.methods.toAuthJSON = function(){
     };
 };
 
+UserSchema.methods.toProfileJSONFor = function(user){
+    return{
+        username: this.username,
+        bio: this.bio,
+        image: this.image || 'https://vignette.wikia.nocookie.net/capcomdatabase/images/5/52/MML2Servbot.png/revision/latest?cb=20110118165520',
+        following: false
+    };
+};
+
 mongoose.model('User', UserSchema);

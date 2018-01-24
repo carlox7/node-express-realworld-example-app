@@ -51,7 +51,9 @@ router.get('/user', auth.required, function(req, res, next){
 router.put('/user', auth.required, function(req, res, next){
     User.findById(req.payload.id)
     .then(user => {
-        if(!user){return res.sendStatus(401);}
+        if(!user){
+            return res.sendStatus(401);
+        }
 
         if(typeof req.body.user.username !== 'undefined'){
             user.username = req.body.user.username;
